@@ -1,0 +1,21 @@
+@relation zoo
+
+@attribute hair {false, true}
+@attribute feathers {false, true}
+@attribute eggs {false, true}
+@attribute milk {false, true}
+@attribute airborne {false, true}
+@attribute aquatic {false, true}
+@attribute predator {false, true}
+@attribute toothed {false, true}
+@attribute backbone {false, true}
+@attribute breathes {false, true}
+@attribute venomous {false, true}
+@attribute fins {false, true}
+@attribute legs INTEGER [0,9]
+@attribute tail {false, true}
+@attribute domestic {false, true}
+@attribute catsize {false, true}
+@attribute type { mammal, bird, reptile, fish, amphibian, insect, invertebrate }
+
+@data
