@@ -29,36 +29,38 @@ public class Main {
         Evaluation evaluation = new Evaluation(datasetFiltrado);
         evaluation.evaluateModel(naiveBayes, datasetFiltrado);
 
-        System.out.println(evaluation.toSummaryString("\nResultados\n=====\n", false));
+        Animal[] animals = {new Animal("cat", new String[]{"true", "false", "false", "true", "false", "false", "false", "false", "true", "true", "false", "false", "4", "true", "true", "true", "?"}),
+                            new Animal("crab", new String[]{"false", "false", "true", "false", "false", "true", "true", "false", "false", "false", "false", "false", "4", "false", "false", "false", "?"}),
+                            new Animal("snake", new String[]{"false", "false", "true", "false", "false", "false", "true", "true", "true", "true", "true", "false", "0", "true", "false", "false", "?"})};
 
-        Animal dog = new Animal("dog", new String[]{"true", "false", "false", "true", "false", "false", "false", "false", "true", "true", "false", "false", "4", "true", "true", "false", "?"});
-        Animal cat = new Animal("cat", new String[]{"true", "false", "false", "true", "false", "false", "false", "false", "true", "true", "false", "false", "4", "true", "true", "true", "?"});
-        Animal crab = new Animal("crab", new String[]{"false", "false", "true", "false", "false", "true", "true", "false", "false", "false", "false", "false", "4", "false", "false", "false", "?"});
-        Animal pitviper = new Animal("pitvipe", new String[]{"false", "false", "true", "false", "false", "false", "true", "true", "true", "true", "true", "false", "0", "true", "false", "false", "?"});
+        for(int i = 0; i < animals.length; i++){
+            predictAnimal(animals[i], datasetFiltrado, naiveBayes);
+        }
+        //System.out.println("Prueba jevi-----");
+        //printconditional(naiveBayes.getConditionalEstimators());
 
+    }
 
-
+    static void predictAnimal(Animal animal,Instances datasetFiltrado,  NaiveBayes naiveBayes) throws Exception{
         File file = new File("src/main/java/data/zoo-test.arff");
         FileWriter fr = new FileWriter(file, true);
-        fr.write(pitviper.getStringAtt());
+        fr.write(animal.getStringAtt());
         fr.close();
 
         DataSource dataSource2 = new DataSource("src/main/java/data/zoo-test.arff");
         Instances dataset2 = dataSource2.getDataSet();
 
         datasetFiltrado.add(dataset2.get(0));
-        System.out.println(datasetFiltrado.toSummaryString());
+        //System.out.println(datasetFiltrado.toSummaryString());
 
-        evaluation = new Evaluation(datasetFiltrado);
+        Evaluation evaluation = new Evaluation(datasetFiltrado);
         evaluation.evaluateModel(naiveBayes, datasetFiltrado);
-        System.out.println(evaluation.toSummaryString("\nResultados\n=====\n", false));
+        System.out.println(evaluation.toSummaryString("\nResultados\n=====", false));
 
         int prediction = (int) naiveBayes.classifyInstance(datasetFiltrado.lastInstance());
-        resetFile(pitviper.getStringAtt());
-        System.out.println("\nResultados De La Prediccion: \n");
-        translateResult(prediction);
-        System.out.println("Prueba jevi-----");
-        //printconditional(naiveBayes.getConditionalEstimators());
+        resetFile(animal.getStringAtt());
+        System.out.println("Resultados De La Prediccion:");
+        translateResult(prediction, animal.getName());
 
     }
 
@@ -72,10 +74,9 @@ public class Main {
 
     }
 
-    static void translateResult(int result) {
+    static void translateResult(int result, String animalName) {
         String[] result_arr = {"mammal", "bird", "reptile", "fish", "amphibian", "insect", "invertebrate"};
-        System.out.println("Se predijo que el animal seria de tipo: " + result_arr[result]);
-        System.out.println(result);
+        System.out.println("Se predijo que el animal " + animalName + " seria de tipo: " + result_arr[result]);
 
     }
 
@@ -97,10 +98,10 @@ public class Main {
         input.close();
 
         if (!file.delete()) {
-            System.out.println("No se puede borrar el archivo");
+          //  System.out.println("No se puede borrar el archivo");
         }
         if (!temp.renameTo(file)) {
-            System.out.println("No se puede renombrar el archivo");
+          //  System.out.println("No se puede renombrar el archivo");
         }
 
         FileWriter fr = new FileWriter(temp, true);
