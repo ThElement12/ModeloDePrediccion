@@ -5,6 +5,7 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
+import weka.estimators.Estimator;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 
@@ -15,13 +16,13 @@ public class Main {
 
         DataSource dataSource = new DataSource("src/main/java/data/zoo.arff");
         Instances dataSet = dataSource.getDataSet();
-        dataSet.setClass(dataSet.attribute("type"));
-        Remove removeattribute = new Remove();
+        dataSet.setClassIndex(dataSet.numAttributes()-1);
+        Remove remove = new Remove();
 
-        int[] listattributes =new int[]{0,17};
-        removeattribute.setAttributeIndicesArray(listattributes);
-        removeattribute.setInputFormat(dataSet);
-        Instances datasetFiltrado = Filter.useFilter(dataSet, removeattribute);
+        int[] listattributes =new int[]{0};
+        remove.setAttributeIndicesArray(listattributes);
+        remove.setInputFormat(dataSet);
+        Instances datasetFiltrado = Filter.useFilter(dataSet, remove);
 
         NaiveBayes naiveBayes = new NaiveBayes();
         naiveBayes.buildClassifier(datasetFiltrado);
@@ -30,14 +31,16 @@ public class Main {
 
         System.out.println(evaluation.toSummaryString("\nResultados\n=====\n", false));
 
-        Animal dog = new Animal("dog", new String[]{"true", "false", "false", "true", "false", "false", "false", "false", "true", "true", "false", "false", "4", "true", "true", "false"});
-        Animal cat = new Animal("cat", new String[]{"true", "false", "false", "true", "false", "false", "false", "false", "true", "true", "false", "false", "4", "true", "true", "true"});
-        Animal crab = new Animal("crab", new String[]{"false", "false", "true", "false", "false", "true", "true", "false", "false", "false", "false", "false", "4", "false", "false", "false"});
-        Animal pitviper = new Animal("pitvipe", new String[]{"false", "false", "true", "false", "false", "false", "true", "true", "true", "true", "true", "false", "0", "true", "false", "false"});
+        Animal dog = new Animal("dog", new String[]{"true", "false", "false", "true", "false", "false", "false", "false", "true", "true", "false", "false", "4", "true", "true", "false", "?"});
+        Animal cat = new Animal("cat", new String[]{"true", "false", "false", "true", "false", "false", "false", "false", "true", "true", "false", "false", "4", "true", "true", "true", "?"});
+        Animal crab = new Animal("crab", new String[]{"false", "false", "true", "false", "false", "true", "true", "false", "false", "false", "false", "false", "4", "false", "false", "false", "?"});
+        Animal pitviper = new Animal("pitvipe", new String[]{"false", "false", "true", "false", "false", "false", "true", "true", "true", "true", "true", "false", "0", "true", "false", "false", "?"});
+
+
 
         File file = new File("src/main/java/data/zoo-test.arff");
         FileWriter fr = new FileWriter(file, true);
-        fr.write(crab.getStringAtt());
+        fr.write(pitviper.getStringAtt());
         fr.close();
 
         DataSource dataSource2 = new DataSource("src/main/java/data/zoo-test.arff");
@@ -51,11 +54,21 @@ public class Main {
         System.out.println(evaluation.toSummaryString("\nResultados\n=====\n", false));
 
         int prediction = (int) naiveBayes.classifyInstance(datasetFiltrado.lastInstance());
-        System.out.println(prediction);
-        resetFile(crab.getStringAtt());
+        resetFile(pitviper.getStringAtt());
         System.out.println("\nResultados De La Prediccion: \n");
         translateResult(prediction);
-        //System.out.println(naiveBayes.getConditionalEstimators());
+        System.out.println("Prueba jevi-----");
+        //printconditional(naiveBayes.getConditionalEstimators());
+
+    }
+
+    static void printconditional(Estimator[][] estimators){
+        for(int i = 0; i < estimators.length; i++){
+            for(int j = 0; j < estimators[i].length; j++){
+                System.out.print(estimators[i][j]);
+            }
+            System.out.println("\n");
+        }
 
     }
 

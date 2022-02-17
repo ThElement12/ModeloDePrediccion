@@ -93,9 +93,6 @@
 @attribute type { mammal, bird, reptile, fish, amphibian, insect, invertebrate }
 
 @data
-%
-% Instances (101):
-%
 aardvark,true,false,false,true,false,false,true,true,true,true,false,false,4,false,false,true,mammal
 antelope,true,false,false,true,false,false,false,true,true,true,false,false,4,true,false,true,mammal
 bass,false,false,true,false,false,true,true,true,true,false,false,true,0,true,false,false,fish
