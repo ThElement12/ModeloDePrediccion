@@ -17,22 +17,26 @@ public class Main {
         DataSource dataSource = new DataSource("src/main/java/data/zoo.arff");
         Instances dataSet = dataSource.getDataSet();
         dataSet.setClassIndex(dataSet.numAttributes()-1);
-        Remove remove = new Remove();
 
+        //Se eliminan los atributos que no vamos a utilizar para nuestro modelo
+        Remove remove = new Remove();
         int[] listattributes =new int[]{0};
         remove.setAttributeIndicesArray(listattributes);
         remove.setInputFormat(dataSet);
         Instances datasetFiltrado = Filter.useFilter(dataSet, remove);
 
+        //Se utiliza naiveBayes como clasificador
         NaiveBayes naiveBayes = new NaiveBayes();
         naiveBayes.buildClassifier(datasetFiltrado);
         Evaluation evaluation = new Evaluation(datasetFiltrado);
         evaluation.evaluateModel(naiveBayes, datasetFiltrado);
 
+        //Se declaran los animales a buscar
         Animal[] animals = {new Animal("cat", new String[]{"true", "false", "false", "true", "false", "false", "false", "false", "true", "true", "false", "false", "4", "true", "true", "true", "?"}),
                             new Animal("crab", new String[]{"false", "false", "true", "false", "false", "true", "true", "false", "false", "false", "false", "false", "4", "false", "false", "false", "?"}),
                             new Animal("snake", new String[]{"false", "false", "true", "false", "false", "false", "true", "true", "true", "true", "true", "false", "0", "true", "false", "false", "?"})};
 
+        //Se recorre cada uno para predecir su tipo
         for(int i = 0; i < animals.length; i++){
             predictAnimal(animals[i], datasetFiltrado, naiveBayes);
         }
@@ -40,15 +44,22 @@ public class Main {
         //printconditional(naiveBayes.getConditionalEstimators());
 
     }
-
+    /**Esta sería nuestra función clave la cual recibiría un animal,
+     *  el dataset filtrado y nuestro objeto de bayes. Aquí se carga el dato del animal en un dataset temporal en un
+     *  archivo para luego cargar este dataset y clasificarlo con bayes, este dando como resultado la predicción
+     *  del tipo del animal.
+     */
     static void predictAnimal(Animal animal,Instances datasetFiltrado,  NaiveBayes naiveBayes) throws Exception{
+        //Cuando se tiene la nueva instancia se coloca en un archivo arff
         File file = new File("src/main/java/data/zoo-test.arff");
         FileWriter fr = new FileWriter(file, true);
         fr.write(animal.getStringAtt());
         fr.close();
 
+        //Se vuelve a cargar ese dataset con la instancia nueva
         DataSource dataSource2 = new DataSource("src/main/java/data/zoo-test.arff");
         Instances dataset2 = dataSource2.getDataSet();
+        //Aquí lo agregamos al dataset principal para hacer la predicción y probar el modelo con esa instancia
 
         datasetFiltrado.add(dataset2.get(0));
         //System.out.println(datasetFiltrado.toSummaryString());
